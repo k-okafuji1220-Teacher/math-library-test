@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>高校数学 デジタル教材ライブラリー</title>
+  <style>
+    :root {
+      --bg-main: #0a0e1a;
+      --card-bg: rgba(255, 255, 255, 0.07);
+      --card-border: rgba(255, 255, 255, 0.15);
+      --text-main: #eef4ff;
+      --text-muted: #a0aec0;
+      --accent-blue: #4285f4;
+      --accent-cyan: #6ee7ff;
+      --accent-purple: #8b7cff;
+      --accent-green: #34a853;
+      --radius: 16px;
+      --font-sans: "Inter", "Noto Sans JP", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(66, 133, 244, 0.15), transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(139, 124, 255, 0.15), transparent 40%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: min(calc(100% - 32px), 1000px);
+      margin: 0 auto;
+      padding: 40px 0;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 900;
+      margin: 0 0 8px;
+      background: linear-gradient(90deg, #fff, var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin: 0;
+    }
+
+    /* タブ切り替えボタン */
+    .category-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .tab-btn:hover, .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-color: transparent;
+      box-shadow: 0 4px 20px rgba(66, 133, 244, 0.4);
+    }
+
+    /* 教材グリッド */
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .material-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .material-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(110, 231, 255, 0.5);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .category-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent-cyan);
+      letter-spacing: 0.05em;
+    }
+
+    .type-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .type-badge.pdf { background: rgba(234, 67, 53, 0.2); color: #ff8a80; }
+    .type-badge.app { background: rgba(52, 168, 83, 0.2); color: #81c784; }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0 0 8px;
+      color: #fff;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0 0 20px;
+      flex-grow: 1;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 14px rgba(66, 133, 244, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>📐 高校数学 デジタル教材ライブラリー</h1>
+      <p>授業の予習・復習、定期テスト対策プリントとWebアプリ集</p>
+    </header>
+
+    <!-- 分類カテゴリーのタブ -->
+    <div class="category-tabs">
+      <button class="tab-btn active" onclick="filterCategory('all')">すべて表示</button>
+      <button class="tab-btn" onclick="filterCategory('math1')">数学Ⅰ</button>
+      <button class="tab-btn" onclick="filterCategory('math2')">数学Ⅱ</button>
+      <button class="tab-btn" onclick="filterCategory('test')">定期テスト対策</button>
+    </div>
+
+    <!-- 教材一覧 -->
+    <div class="materials-grid">
+
+      <!-- 数学Ⅰ：2次関数プリント -->
+      <div class="material-card" data-category="math1">
+        <div>
+          <div class="card-header">
+            <span class="category-badge">数学Ⅰ</span>
+            <span class="type-badge pdf">📄 PDFプリント</span>
+          </div>
+          <h2 class="card-title">2次関数：最大・最小の応用</h2>
+          <p class="card-desc">軸が動くタイプの最大・最小問題5選。途中式と丁寧な解説付き演習シートです。</p>
+        </div>
+        <a href="pdfs/math1_quadratic_minmax.pdf" target="_blank" class="action-btn">プリントを開く (PDF)</a>
+      </div>
+
+      <!-- 数学Ⅰ：グラフシミュレーター（Webアプリ） -->
+      <div class="material-card" data-category="math1">
+        <div>
+          <div class="card-header">
+            <span class="category-badge">数学Ⅰ</span>
+            <span class="type-badge app">🧪 Webアプリ</span>
+          </div>
+          <h2 class="card-title">2次関数 グラフ変形シミュレーター</h2>
+          <p class="card-desc">係数 a, p, q のスライダーを動かして、放物線の平行移動や頂点の動きをリアルタイムに観察できます。</p>
+        </div>
+        <a href="apps/quadratic_graph.html" target="_blank" class="action-btn">アプリを起動する</a>
+      </div>
+
+      <!-- 数学Ⅱ：三角関数プリント -->
+      <div class="material-card" data-category="math2">
+        <div>
+          <div class="card-header">
+            <span class="category-badge">数学Ⅱ</span>
+            <span class="type-badge pdf">📄 PDFプリント</span>
+          </div>
+          <h2 class="card-title">三角関数：加法定理と公式まとめ</h2>
+          <p class="card-desc">加法定理・2倍角の公式の導出手順と、よく出る基本計算問題のチェックシート。</p>
+        </div>
+        <a href="pdfs/math2_trig_formulas.pdf" target="_blank" class="action-btn">プリントを開く (PDF)</a>
+      </div>
+
+      <!-- 定期テスト対策：中間テスト予想問題 -->
+      <div class="material-card" data-category="test">
+        <div>
+          <div class="card-header">
+            <span class="category-badge">定期テスト対策</span>
+            <span class="type-badge pdf">📄 PDFプリント</span>
+          </div>
+          <h2 class="card-title">1学期中間テスト 予想問題パック</h2>
+          <p class="card-desc">数Ⅰ「数と式〜2次関数」の全対問。制限時間50分目標の模試形式プリントです。</p>
+        </div>
+        <a href="pdfs/test_term1_math1.pdf" target="_blank" class="action-btn">プリントを開く (PDF)</a>
+      </div>
+
+      <!-- 定期テスト対策：10分一問一答（Web） -->
+      <div class="material-card" data-category="test">
+        <div>
+          <div class="card-header">
+            <span class="category-badge">定期テスト対策</span>
+            <span class="type-badge app">🧪 Webアプリ</span>
+          </div>
+          <h2 class="card-title">テスト直前 公式一問一答クイズ</h2>
+          <p class="card-desc">スマホで手軽に復習できる4択クイズ。全問正解で紙吹雪演出が出ます。</p>
+        </div>
+        <a href="apps/formula_quiz.html" target="_blank" class="action-btn">クイズをはじめる</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // カテゴリー絞り込み処理
+    function filterCategory(category) {
+      const cards = document.querySelectorAll('.material-card');
+      const buttons = document.querySelectorAll('.tab-btn');
+
+      // ボタンのスタイル更新
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // カードの表示/非表示切り替え
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
